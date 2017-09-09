@@ -1,0 +1,40 @@
+<html>
+<header>
+  <title>Savage Bot</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</header>
+<body>
+  <span>Type your post here:</span>
+  <br />
+  <form>
+    <!-- <input type="text" /> -->
+    <textarea id='post' name=post cols="40" rows="5"></textarea>
+    <br />
+    <input type="submit" value="Submit">
+  </form>
+
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js'></script>
+  <script>
+      var socket = io();
+
+      $(document).ready( function() {
+        $('form').submit(function(e) {
+          console.log("prevent default")
+          socket.emit('post_analyze', $('textarea#post').val());
+          console.log("after emit")
+          // $('textarea#post').val('');
+
+          // stop form submission
+          return false;
+        });
+
+        // listen for result
+        socket.on('post_result', function (result) {
+          console.log("post result from client", result)
+        });
+      });
+    </script>
+
+</body>
+</html>

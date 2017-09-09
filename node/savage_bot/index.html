@@ -36,10 +36,9 @@
         const keywords = results[0]['entities'];
 
         console.log("post result from client", keywords);
-        temp = keywords;
 
         // $('div.result').html("keywords: " + keywords)
-        $('div.result').html("keywords: " + keywords.map(function(x) {x['name']}))
+        $('div.result').html("keywords: " + keywords.map(function(x) {return x['name']}))
       });
     });
   </script>

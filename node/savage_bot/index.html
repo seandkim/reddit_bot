@@ -11,30 +11,38 @@
     <textarea id='post' name=post cols="40" rows="5"></textarea>
     <br />
     <input type="submit" value="Submit">
-  </form>
 
+    <br />
+    <div class="result">
+
+    </div>
+  </form>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js'></script>
   <script>
-      var socket = io();
+    var temp;
+    var socket = io();
 
-      $(document).ready( function() {
-        $('form').submit(function(e) {
-          console.log("prevent default")
-          socket.emit('post_analyze', $('textarea#post').val());
-          console.log("after emit")
-          // $('textarea#post').val('');
+    $(document).ready( function() {
+      $('form').submit(function(e) {
+        socket.emit('post_analyze', $('textarea#post').val());
+        $('textarea#post').val('');
 
-          // stop form submission
-          return false;
-        });
-
-        // listen for result
-        socket.on('post_result', function (result) {
-          console.log("post result from client", result)
-        });
+        return false; // prevent default action
       });
-    </script>
+
+      // listen for result
+      socket.on('post_result', function (results) {
+        const keywords = results[0]['entities'];
+
+        console.log("post result from client", keywords);
+        temp = keywords;
+
+        // $('div.result').html("keywords: " + keywords)
+        $('div.result').html("keywords: " + keywords.map(function(x) {x['name']}))
+      });
+    });
+  </script>
 
 </body>
 </html>

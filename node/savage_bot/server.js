@@ -17,14 +17,11 @@ app.get('/', function(req, res) {
 io.on('connection', function(socket) {
   socket.on('post_analyze', function(post_text) {
     console.log("post_analyze:", post_text);
-    gcloudAPI(post_text);
+    analyzeEntities(post_text);
     return false;
   })
 
-  function gcloudAPI(text) {
-    // socket.emit('post_result', "hello");
-    console.log("gcloudAPI start");
-
+  function analyzeEntities(text) {
     const document = {
       'content': text,
       type: 'PLAIN_TEXT'
@@ -33,12 +30,6 @@ io.on('connection', function(socket) {
     // Detects the sentiment of the text
     language.analyzeEntities({'document': document})
       .then((results) => {
-        const sentiment = results[0].documentSentiment;
-
-        console.log(`Text: ${text}`);
-        console.log(`Sentiment score: ${sentiment.score}`);
-        console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
-
         socket.emit('post_result', results);
       })
       .catch((err) => {

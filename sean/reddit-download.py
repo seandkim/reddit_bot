@@ -12,7 +12,7 @@ def getRedditHome(subredit):
 	comment_links = soup.find_all('a', {'href': re.compile("^/r/RoastMe/comments/")})
 	
 	for link in comment_links:
-		html_doc = urllib2.urlopen(link).read()
+		html_doc = urllib2.urlopen(link.).read()
 		print(html_doc.find('title'))
 
 	return 42

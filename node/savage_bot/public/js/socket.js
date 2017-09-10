@@ -29,7 +29,7 @@ $(document).ready(function() {
     socket.on('post_result', function(response) {
       if (response['success']) {
         console.log("result from server: ", response);
-        $('#feedback').html(response['comment'])
+        $('#feedback').html(response['comment']) 
       } else {
         console.log("post_result socket call failed", response)
 

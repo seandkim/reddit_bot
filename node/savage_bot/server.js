@@ -18,16 +18,25 @@ app.get('/', function(req, res) {
 // database handling
 // keyword => commentID
 var dict = new Map();
-var kwFiles = ['kw1000.json']
+var kwFiles = ['kw1000.json', 'kw5000-1.json']
 
 for (var i=0; i < kwFiles.length; i++) {
   var json = JSON.parse(fs.readFileSync('data/' + kwFiles[i], 'utf8'));
   console.log("JSON number of entry is", json.length)
   for (var idx in json) {
     var e = json[idx]
-    dict.set(e['keyword'], e['commentID'])
+    var kw = e['keyword'];
+    var comments = e['commentID'];
+
+    if (kw in dict) {
+      dict.set(kw, dict.get(kw).concat(comments))
+    } else {
+      dict.set(kw, comments)
+    }
   }
 }
+// console.log(dict)
+// console.log("Total entry in dict", dict.keys())
 
 // commentID => comment
 var comments = fs.readFileSync('comments.csv', 'utf8').split('\n');

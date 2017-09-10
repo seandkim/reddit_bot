@@ -8,6 +8,7 @@ var http = require('http').Server(app)
 var io = require('socket.io')(http);
 const language = Language(); // Instantiates a gcloud client
 
+app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res) {
   // console.log("query string = ", req.query) //respond to query
 

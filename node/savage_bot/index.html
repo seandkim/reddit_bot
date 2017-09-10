@@ -1,176 +1,93 @@
 <html>
-<header>
-  <title>Savage Bot</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-</header>
-<body>
-  <span>Type your post here:</span>
-  <br />
-  <form>
-    <!-- <input type="text" /> -->
-    <textarea id='post' name=post cols="40" rows="5"></textarea>
-    <br />
-    <input type="submit" value="Submit">
+    <header>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Savage Bot</title>
+            <link rel="stylesheet" type="text/css" href="css/main.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                <script src='js/transition.js'></script>
+    </header>
 
-    <br />
-    <div class="result">
+    <body>
 
-    </div>
-  </form>
+        <div id="bg" class="snow-bg">
+            <div class="snow-bg-img-container">
+                <img class="snow-ground" src="images/ground@3x.png">
+                    </div>
+        </div>
+        <div id="snow"></div>
 
-  <br />
+        <div class="main-container">
+            <div class="logo-container">
+                <div class="pennapps-title">
+                    <h1 class="subheader">PENNAPPS XVI</h1>
+                </div>
+                <img src="images/logo@3x.png">
+                    <div class="circle hollow-on-hover" id="info"></div>
+                    <p class="hack-description">
+                    A hack not to make the world a better place - <br> but to bring a little fun to people, and to ourselves.
+                    </p>
+                    </div>
+            <div class="main-form" id="msg-form">
+                <h1 class="form-title">What do you want to say?</h1>
+                <form action="/action_page.php" method="get" autocomplete="off">
+                    <input type="text" id="request-string" placeholder="Type here and press enter..." oninput="removeLoadingAnimation()">
+                        </form>
+                <p id="feedback" class="wait-text"></p>
+            </div>
+        </div>
 
-  <div class="camera">
-    <video id="video">Video stream not available.</video>
-    <button id="startbutton">Take photo</button>
-  </div>
-  <canvas id="canvas">
-  </canvas>
-  <!-- <div class="output">
-    <img id="photo" alt="The screen capture will appear in this box.">
-  </div> -->
+        <div class="fix-savage-container">
+            <div class="savage-container" id="figure">
+                <img src="images/Savage@3x.png">
+                    </div>
+        </div>
 
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js'></script>
-  <script>
-    var temp;
-    var socket = io();
+        <div class="footer-text">
+            Built merrily by Max Le, Sean D Kim, and Tiffany Lee in 2017 Pennapps.
+        </div>
 
-    $(document).ready( function() {
-      $('form').submit(function(e) {
-        socket.emit('post_analyze', $('textarea#post').val());
-        $('textarea#post').val('');
+        <!--
+         <span>Type your post here:</span>
+         <br />
+         <form>
+         <textarea id='post' name=post cols="40" rows="5"></textarea>
+         <br />
+         <input type="submit" value="Submit">
 
-        return false; // prevent default action
-      });
+         <br />
+         <div class="result">
 
-      // listen for result
-      socket.on('post_result', function (results) {
-        const keywords = results[0]['entities'];
+         </div>
+         </form>
+         -->
 
-        console.log("post result from client", keywords);
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js'></script>
+            <script>
+            var temp;
+            var socket = io();
 
-        // $('div.result').html("keywords: " + keywords)
-        $('div.result').html("keywords: " + keywords.map(function(x) {return x['name']}))
-      });
-    });
-  </script>
+            $(document).ready(function() {
+            $('form').submit(function(e) {
+            socket.emit('post_analyze', $('textarea#post').val());
+            $('textarea#post').val('');
 
-  <script>
-    (function() {
-      // The width and height of the captured photo. We will set the
-      // width to the value defined here, but the height will be
-      // calculated based on the aspect ratio of the input stream.
+            return false; // prevent default action
+            });
 
-      var width = 320;    // We will scale the photo width to this
-      var height = 0;     // This will be computed based on the input stream
+            // listen for result
+            socket.on('post_result', function(results) {
+            const keywords = results[0]['entities'];
 
-      // |streaming| indicates whether or not we're currently streaming
-      // video from the camera. Obviously, we start at false.
+            console.log("post result from client", keywords);
 
-      var streaming = false;
+            // $('div.result').html("keywords: " + keywords)
+            $('div.result').html("keywords: " + keywords.map(function(x) {
+            return x['name']
+            }))
+            });
+            });
+            </script>
 
-      // The various HTML elements we need to configure or control. These
-      // will be set by the startup() function.
+            </body>
 
-      var video = null;
-      var canvas = null;
-      var photo = null;
-      var startbutton = null;
-
-      function startup() {
-        video = document.getElementById('video');
-        canvas = document.getElementById('canvas');
-        photo = document.getElementById('photo');
-        startbutton = document.getElementById('startbutton');
-
-        navigator.getMedia = ( navigator.getUserMedia ||
-                               navigator.webkitGetUserMedia ||
-                               navigator.mozGetUserMedia ||
-                               navigator.msGetUserMedia);
-
-        navigator.getMedia(
-          {
-            video: true,
-            audio: false
-          },
-          function(stream) {
-            if (navigator.mozGetUserMedia) {
-              video.mozSrcObject = stream;
-            } else {
-              var vendorURL = window.URL || window.webkitURL;
-              video.src = vendorURL.createObjectURL(stream);
-            }
-            video.play();
-          },
-          function(err) {
-            console.log("An error occured! " + err);
-          }
-        );
-
-        video.addEventListener('canplay', function(ev){
-          if (!streaming) {
-            height = video.videoHeight / (video.videoWidth/width);
-
-            // Firefox currently has a bug where the height can't be read from
-            // the video, so we will make assumptions if this happens.
-
-            if (isNaN(height)) {
-              height = width / (4/3);
-            }
-
-            video.setAttribute('width', width);
-            video.setAttribute('height', height);
-            canvas.setAttribute('width', width);
-            canvas.setAttribute('height', height);
-            streaming = true;
-          }
-        }, false);
-
-        startbutton.addEventListener('click', function(ev){
-          takepicture();
-          ev.preventDefault();
-        }, false);
-
-        clearphoto();
-      }
-
-      // Fill the photo with an indication that none has been
-      // captured.
-
-      function clearphoto() {
-        var context = canvas.getContext('2d');
-        context.fillStyle = "#AAA";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        var data = canvas.toDataURL('image/png');
-        photo.setAttribute('src', data);
-      }
-
-      // Capture a photo by fetching the current contents of the video
-      // and drawing it into a canvas, then converting that to a PNG
-      // format data URL. By drawing it on an offscreen canvas and then
-      // drawing that to the screen, we can change its size and/or apply
-      // other changes before drawing it.
-
-      function takepicture() {
-        var context = canvas.getContext('2d');
-        if (width && height) {
-          canvas.width = width;
-          canvas.height = height;
-          context.drawImage(video, 0, 0, width, height);
-
-          var data = canvas.toDataURL('image/png');
-          photo.setAttribute('src', data);
-        } else {
-          clearphoto();
-        }
-      }
-
-      // Set up our event listener to run the startup process
-      // once loading is complete.
-      window.addEventListener('load', startup, false);
-      })();
-  </script>
-
-</body>
-</html>
+            </html>

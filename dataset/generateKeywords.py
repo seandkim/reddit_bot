@@ -37,33 +37,57 @@ def entities_text(text):
 
 # print(entities_text("Jewish cultural studies student. Roast her!"))
 
-def main(): 
-
+def main(targetFile): 
     store = dict()
-    with open('dataset/final/2m.csv', 'r', encoding="utf-8") as csvfile:
+    tolerance = 10
+    with open(targetFile, 'r') as csvfile:
         rawFile = csv.reader(csvfile)
         i = 0
         for row in rawFile: 
-            if i >= 10: break            
+            # if i > 2: break;
             post, commentID = "".join(i for i in row[3] if ord(i)<128), row[5]
             if post == "title": continue
-            keys = entities_text(post)
+            try: 
+                keys = entities_text(post)
+            except: 
+                print("BROKE!!")
+                if (tolerance > 0):
+                    tolerance -= 1
+                    continue
+                else: 
+                    break
             for key in keys:
                 if key not in store: 
                     store[key] = []
                 store[key].append(commentID)
                 print(commentID)
             i += 1
+
     print("Done storing")
     result = []
     for key in store: 
-        result.append(json.dumps({"keyword": key, "commentID": store[key]}))
+        # temp = json.dumps()
+        # print(type(temp))
+        result.append({"keyword": key, "commentID": store[key]})
+
     return result
 
-def writeFile(path):
-    content = main()
+def writeFile(path, targetFile):
+    content = main(targetFile)
     print("Done generating content")
     with open(path, "wt") as f:
-        f.write(str(content))
+        json.dump(content, f)
 
-writeFile("foo.txt")
+        # f.write(str(content))
+
+# I need this to work 
+try:
+    writeFile("foo.txt", 'final/2m-3810-8000.csv')
+except:
+    try: 
+        writeFile("bar.txt", 'final/2m-8001-15000.csv')
+    except:
+        try: 
+            writeFile("woohoo.txt", 'final/15000-25000.csv')
+        except:
+            print("out of luck I guess!")

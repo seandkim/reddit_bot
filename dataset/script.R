@@ -1,12 +1,12 @@
 
 # Define Path
-comments_dataset_path <- "Roastme-2017-03/comment.csv"
-post_dataset_path <- "Roastme-2017-03/post.csv"
-file_name <- "joint/Roastme-joint-2017-03.csv"
+comments_dataset_path <- "Toastme-2017-06/comment.csv"
+post_dataset_path <- "Toastme-2017-06/post.csv"
+file_name <- "joint/Toastme-joint-2017-03.csv"
 
 # read library
-library(readr)
-library(dplyr)
+#library(readr)
+#library(dplyr)
 
 # Read data
 comment <- read_csv(comments_dataset_path)
@@ -24,6 +24,7 @@ colnames(post_skimmed)[4] <- "post_id"
 # Join Table
 joint <- merge(post_skimmed, comment_skimmed, sort = FALSE)
 joint <- joint[, -6]
+View(joint)
 
 # Write CSV
 write_csv(joint, file_name)

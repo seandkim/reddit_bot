@@ -17,7 +17,7 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
   socket.on('post_analyze', function(post_text) {
-    console.log("post_analyze:", post_text);
+    console.log("received post_analyze:", post_text);
     analyzeEntities(post_text);
     return false;
   })
@@ -31,13 +31,38 @@ io.on('connection', function(socket) {
     // Detects the sentiment of the text
     language.analyzeEntities({'document': document})
       .then((results) => {
-        socket.emit('post_result', results);
+        console.log("analyzeEntities succeeded")
+        const kws = results[0]['entities'].map(function(e) {return e['name']})
+        const comment = searchDatabase(kws);
+
+        const response = {
+          success: true,
+          keywords: kws,
+          comment: comment
+        };
+
+        socket.emit('post_result', response);
       })
       .catch((err) => {
-        console.error('ERROR:', err);
+        console.log("analyzeEntities failed")
+        const response = {
+          success: false,
+          keywords: null,
+          comment: null,
+        };
+
+        socket.emit('post_result', response);
       });
   }
 });
+
+
+// takes in a list of keywords
+// returns a best response from the database
+function searchDatabase(kws) {
+  return "Your mom";
+}
+
 
 http.listen(3000, function() {
   console.log('listening on ' + 3000);

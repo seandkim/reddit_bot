@@ -1,3 +1,7 @@
+# Savage Bot
+
+![Home Page of Our Web App]("design/home.png")
+
 ## Inspiration
 
 "Savage," by the definition of Urban Dictionary, means to humorously mock or humiliate someone with a well-timed joke, diss or comeback. We wanted to build a bot that will automatically savage (or roast) you, either because you feel like you deserve it, or simply because you needed a little alternate fun in your otherwise boring life.

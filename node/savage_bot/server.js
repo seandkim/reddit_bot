@@ -17,8 +17,8 @@ app.get('/', function(req, res) {
 
 // database handling
 // keyword => commentID
-var json = JSON.parse(fs.readFileSync('example.json', 'utf8'));
-// console.log("JSON is", json)
+var json = JSON.parse(fs.readFileSync('data/kw200.json', 'utf8'));
+console.log("JSON is", json)
 var dict = new Map();
 for (var idx in json) {
   var e = json[idx]
@@ -40,7 +40,9 @@ function searchDatabase(kws) {
   }
 
   const kw = getRandomElem(kws)
+  console.log(kws, kw)
   const commentID = getRandomElem(dict.get(kw))
+  console.log(commentID, comments[commentID])
   return comments[commentID]
 }
 

@@ -104,6 +104,14 @@ html {
     visibility: hidden;
 }
 
+.description {
+  font-family: 'Avenir', sans-serif;
+  color: #FFEEE3;
+  line-height: 1.25;
+  text-align: left;
+  margin-top: 5px;
+}
+
 @keyframes pulse {
     from {
         box-shadow: 0px 0px 10px 3px #FFEEE3;
@@ -128,6 +136,7 @@ html {
     text-align: left;
     font-family: Futura, sans-serif;
     font-weight: 200;
+    margin: 0;
 }
 
 input[type=text] {

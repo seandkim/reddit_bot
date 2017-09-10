@@ -28,12 +28,10 @@ $(document).ready(function() {
     // listen for result
     socket.on('post_result', function(response) {
       if (response['success']) {
-        const keywords = response['keywords']
-        const comment = response['comment']
-        console.log("result from server: ", keywords, comment);
-        $('#feedback').html(comment)
+        console.log("result from server: ", response);
+        $('#feedback').html(response['comment'])
       } else {
-        console.log("post_result socket call failed")
+        console.log("post_result socket call failed", response)
 
         $('#feedback').html(getRandomElem(DEFAULT_RESPONSES))
       }

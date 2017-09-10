@@ -17,30 +17,32 @@ app.get('/', function(req, res) {
 
 // database handling
 // keyword => commentID
-var json = JSON.parse(fs.readFileSync('data/kw200.json', 'utf8'));
-console.log("JSON is", json)
 var dict = new Map();
-for (var idx in json) {
-  var e = json[idx]
-  dict.set(e['keyword'], e['commentID'])
+var kwFiles = ['kw1000.json']
+
+for (var i=0; i < kwFiles.length; i++) {
+  var json = JSON.parse(fs.readFileSync('data/' + kwFiles[i], 'utf8'));
+  console.log("JSON number of entry is", json.length)
+  for (var idx in json) {
+    var e = json[idx]
+    dict.set(e['keyword'], e['commentID'])
+  }
 }
 
 // commentID => comment
 var comments = fs.readFileSync('comments.csv', 'utf8').split('\n');
 
+function getRandomElem(L) {
+  //The maximum is exclusive and the minimum is inclusive
+  min = Math.ceil(0);
+  max = Math.floor(L.length);
+  idx = Math.floor(Math.random() * (max - min)) + min;
+  return L[idx]
+}
+
 // takes in a list of keywords
 // returns a best response from the database
-function searchDatabase(kws) {
-  function getRandomElem(L) {
-    //The maximum is exclusive and the minimum is inclusive
-    min = Math.ceil(0);
-    max = Math.floor(L.length);
-    idx = Math.floor(Math.random() * (max - min)) + min;
-    return L[idx]
-  }
-
-  const kw = getRandomElem(kws)
-  console.log(kws, kw)
+function searchDatabase(kw) {
   const commentID = getRandomElem(dict.get(kw))
   console.log(commentID, comments[commentID])
   return comments[commentID]
@@ -60,16 +62,20 @@ io.on('connection', function(socket) {
       type: 'PLAIN_TEXT'
     };
 
+    var kws = null;
+    var kw = null;
     // Detects the sentiment of the text
     language.analyzeEntities({'document': document})
       .then((results) => {
-        console.log("analyzeEntities succeeded", results)
-        const kws = results[0]['entities'].map(function(e) {return e['name']})
-        const comment = searchDatabase(kws);
+        console.log("analyzeEntities succeeded", results);
+        kws = results[0]['entities'].map(function(e) {return e['name']});
+        kw = getRandomElem(kws);
+        const comment = searchDatabase(kw);
 
         const response = {
           success: true,
           keywords: kws,
+          selected_keyword: kw,
           comment: comment
         };
 
@@ -79,7 +85,8 @@ io.on('connection', function(socket) {
         console.log("analyzeEntities failed", err)
         const response = {
           success: false,
-          keywords: null,
+          keywords: kws,
+          selected_keyword: kw,
           comment: null,
         };
 

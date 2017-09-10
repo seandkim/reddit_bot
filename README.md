@@ -1,6 +1,6 @@
 # Savage Bot
 
-![Home Page of Our Web App]("design/home.png")
+![Home Page of Our Web App](design/home.png)
 
 ## Inspiration
 

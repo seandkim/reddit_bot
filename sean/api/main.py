@@ -24,66 +24,65 @@ from protorpc import remote
 
 
 # [START messages]
-class EchoRequest(messages.Message):
+class extractRequest(messages.Message):
     content = messages.StringField(1)
+    contentType = messages.StringField(2) # either [post, pic]
 
-
-class EchoResponse(messages.Message):
+class extractResponse(messages.Message):
     """A proto Message that contains a simple string field."""
-    content = messages.StringField(1)
+    content = messages.StringField(1) # string representation of a list
 
-
-ECHO_RESOURCE = endpoints.ResourceContainer(
-    EchoRequest,
+# for path or querystring arguments
+EXTRACT_RESOURCE = endpoints.ResourceContainer(
+    ExtractRequest,
     n=messages.IntegerField(2, default=1))
 # [END messages]
 
 
 # [START echo_api]
-@endpoints.api(name='echo', version='v1')
-class EchoApi(remote.Service):
+@endpoints.api(name='extract', version='v1')
+class ExtractApi(remote.Service):
+    @endpoints.method(
+        # This method takes a ResourceContainer defined above.
+        EXTRACT_RESOURCE,
+        # This method returns an Echo message.
+        ExtractResponse,
+        path='extract',
+        http_method='POST',
+        name='extract')
+    def extract(self, request):
+        output_content = ' '.join([request.content] * request.n)
+        return ExtractResponse(content=output_content)
 
     @endpoints.method(
         # This method takes a ResourceContainer defined above.
-        ECHO_RESOURCE,
+        EXTRACT_RESOURCE,
         # This method returns an Echo message.
-        EchoResponse,
-        path='echo',
+        ExtractResponse,
+        path='extract/{n}',
         http_method='POST',
-        name='echo')
-    def echo(self, request):
+        name='extract_path_parameter')
+    def extract_path_parameter(self, request):
         output_content = ' '.join([request.content] * request.n)
-        return EchoResponse(content=output_content)
-
-    @endpoints.method(
-        # This method takes a ResourceContainer defined above.
-        ECHO_RESOURCE,
-        # This method returns an Echo message.
-        EchoResponse,
-        path='echo/{n}',
-        http_method='POST',
-        name='echo_path_parameter')
-    def echo_path_parameter(self, request):
-        output_content = ' '.join([request.content] * request.n)
-        return EchoResponse(content=output_content)
+        return ExtractResponse(content=output_content)
 
     @endpoints.method(
         # This method takes a ResourceContainer defined above.
         message_types.VoidMessage,
         # This method returns an Echo message.
-        EchoResponse,
-        path='echo/getApiKey',
+        ExtractResponse,
+        path='extract/getApiKey',
         http_method='GET',
-        name='echo_api_key')
-    def echo_api_key(self, request):
-        return EchoResponse(content=request.get_unrecognized_field_info('key'))
+        name='extract_api_key')
+    def extract_api_key(self, request):
+        return ExtractResponse(content=request.get_unrecognized_field_info('key'))
 
     @endpoints.method(
         # This method takes an empty request body.
         message_types.VoidMessage,
         # This method returns an Echo message.
-        EchoResponse,
-        path='echo/getUserEmail',
+        ExtractResponse,
+        path='extract/getUserEmail',
         http_method='GET',
         # Require auth tokens to have the following scopes to access this API.
         scopes=[endpoints.EMAIL_SCOPE],
@@ -95,10 +94,10 @@ class EchoApi(remote.Service):
         # raise 401 Unauthorized.
         if not user:
             raise endpoints.UnauthorizedException
-        return EchoResponse(content=user.email())
+        return ExtractResponse(content=user.email())
 # [END echo_api]
 
 
 # [START api_server]
-api = endpoints.api_server([EchoApi])
+api = endpoints.api_server([ExtractApi])
 # [END api_server]

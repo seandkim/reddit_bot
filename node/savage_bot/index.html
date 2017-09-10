@@ -1,93 +1,52 @@
 <html>
-<header>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Savage Bot</title>
-    <link rel="stylesheet" type="text/css" href="src/css/main.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src='src/js/transition.js'></script>
-</header>
+    <header>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Savage Bot</title>
+            <link rel="stylesheet" type="text/css" href="css/main.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script src='js/transition.js'></script>
+    </header>
 
-<body>
-
-    <div id="bg" class="snow-bg">
-        <div class="snow-bg-img-container">
-            <img class="snow-ground" src="src/images/ground@3x.png">
+    <body>
+        <div id="bg" class="snow-bg">
+            <div class="snow-bg-img-container">
+                <img class="snow-ground" src="images/ground@3x.png">
+                    </div>
         </div>
-    </div>
-    <div id="snow"></div>
+        <div id="snow"></div>
 
-    <div class="main-container">
-        <div class="logo-container">
-            <div class="pennapps-title">
-                <h1 class="subheader">PENNAPPS XVI</h1>
+        <div class="main-container">
+            <div class="logo-container">
+                <div class="pennapps-title">
+                    <h1 class="subheader">PENNAPPS XVI</h1>
+                </div>
+                <img src="images/logo@3x.png">
+                    <div class="circle hollow-on-hover" id="info"></div>
+                    <p class="hack-description">
+                    A hack not to make the world a better place - <br> but to bring a little fun to people, and to ourselves.
+                    </p>
+                    </div>
+            <div class="main-form" id="msg-form">
+                <h1 class="form-title">What do you want to say?</h1>
+                <form autocomplete="off">
+                    <input type="text" id="request-string" placeholder="Type here and press enter..." oninput="removeLoadingAnimation()">
+                </form>
+                <p id="feedback" class="wait-text"></p>
             </div>
-            <img src="src/images/logo@3x.png">
-            <div class="circle hollow-on-hover" id="info"></div>
-            <p class="hack-description">
-                A hack not to make the world a better place - <br> but to bring a little fun to people, and to ourselves.
-            </p>
         </div>
-        <div class="main-form" id="msg-form">
-            <h1 class="form-title">What do you want to say?</h1>
-            <form action="/action_page.php" method="get" autocomplete="off">
-                <input type="text" id="request-string" placeholder="Type here and press enter..." oninput="removeLoadingAnimation()">
-            </form>
-            <p id="feedback" class="wait-text"></p>
+
+        <div class="fix-savage-container">
+            <div class="savage-container" id="figure">
+                <img src="images/Savage@3x.png">
+            </div>
         </div>
-    </div>
 
-    <div class="fix-savage-container">
-        <div class="savage-container" id="figure">
-            <img src="src/images/Savage@3x.png">
+        <div class="footer-text">
+            Built merrily by Max Le, Sean D Kim, and Tiffany Lee in 2017 Pennapps.
         </div>
-    </div>
 
-    <div class="footer-text">
-        Built merrily by Max Le, Sean D Kim, and Tiffany Lee in 2017 Pennapps.
-    </div>
-
-    <!-- 
-      <span>Type your post here:</span>
-      <br />
-      <form>
-        <textarea id='post' name=post cols="40" rows="5"></textarea>
-        <br />
-        <input type="submit" value="Submit">
-
-        <br />
-        <div class="result">
-
-        </div>
-        </form>
-    -->
-
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js'></script>
-    <script>
-        var temp;
-        var socket = io();
-
-        $(document).ready(function() {
-            $('form').submit(function(e) {
-                socket.emit('post_analyze', $('textarea#post').val());
-                $('textarea#post').val('');
-
-                return false; // prevent default action
-            });
-
-            // listen for result
-            socket.on('post_result', function(results) {
-                const keywords = results[0]['entities'];
-
-                console.log("post result from client", keywords);
-
-                // $('div.result').html("keywords: " + keywords)
-                $('div.result').html("keywords: " + keywords.map(function(x) {
-                    return x['name']
-                }))
-            });
-        });
-    </script>
-
-</body>
-
+        <!-- allows ajax call between html client and node server -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js'></script>
+        <script src='js/socket.js'></script>
+    </body>
 </html>

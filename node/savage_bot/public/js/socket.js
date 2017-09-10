@@ -27,13 +27,13 @@ $(document).ready(function() {
 
     // listen for result
     socket.on('post_result', function(response) {
+			$('#feedback').html('');
       if (response['success']) {
         console.log("result from server: ", response);
-        $('#feedback').html(response['comment']) 
+        $('#savage-says').fadeIn().html(response['comment']);
       } else {
         console.log("post_result socket call failed", response)
-
-        $('#feedback').html(getRandomElem(DEFAULT_RESPONSES))
+        $('#savage-says').fadeIn().html(getRandomElem(DEFAULT_RESPONSES))
       }
     });
 });

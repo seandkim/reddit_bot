@@ -4,6 +4,7 @@ $(function () {
 
     $('#msg-form').hide();
     $('.chat-response').hide();
+    $('#savage-says').hide();
 
     // for hack description
     $('#info').hover(function () {
@@ -18,6 +19,7 @@ $(function () {
            $('.logo-container').fadeOut(1000, function() {
                $('.main-form').fadeIn(500);
            });
+           $('#snow').fadeOut();
        }
     });
 
@@ -64,5 +66,6 @@ $(document).mousemove(function (event) {
 });
 
 function removeLoadingAnimation() {
+    $('#savage-says').fadeOut();
     $('#feedback').html('');
 };
